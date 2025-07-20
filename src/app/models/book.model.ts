@@ -27,7 +27,7 @@ const bookSchema = new Schema<BookInterface>({
    copies: {
       type: Number,
       required: true,
-      min: [0, 'Copies must be a positive number, got {VALUE}'],
+      min: [0, 'Copies must be a positive number'],
 
    },
    available: {
@@ -40,5 +40,7 @@ const bookSchema = new Schema<BookInterface>({
       timestamps: true
    }
 )
+
+// method todo
 
 export const Book = model("Book", bookSchema)
