@@ -46,4 +46,16 @@ bookSchema.methods.updateAvailability = function () {
    this.available = this.copies > 0
 }
 
+// Pre-save middlewere
+bookSchema.pre('save', function (next) {
+   this.available = this.copies > 0;
+   next()
+})
+
+// Post-save middlewere
+bookSchema.post('save', function (doc) {
+   console.log(`Book "${doc.title}" saved successfully.`);
+})
+
+
 export const Book = model<BookInterface>("Book", bookSchema)
