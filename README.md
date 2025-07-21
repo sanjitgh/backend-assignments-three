@@ -64,3 +64,7 @@ A Library Management System built with **Express**, **TypeScript**, and **MongoD
 ├── README.md
 └── tsconfig.json
 ```
+
+## API Routes
+
+- https://library-management-backend-nu.vercel.app/api/
