@@ -12,7 +12,6 @@ borrowRoute.post('/', async (req: Request, res: Response) => {
 
       // Check the book is exist
       const book = await Book.findById(bookId)
-
       if (!book) throw new Error("Book is not found!")
 
       // Check the book has enough quantity
@@ -20,9 +19,15 @@ borrowRoute.post('/', async (req: Request, res: Response) => {
          throw new Error("Not enough copies available")
       }
 
+      // Deduct copy
+      book.copies -= quantity;
 
+      // Update availability using instance method 
+      book.updateAvailability();
+      await book.save()
 
-      const borrow = await Borrow.create({ book, quantity, dueDate })
+      // Save the borrow record
+      const borrow = await Borrow.create({ book: bookId, quantity, dueDate })
 
       res.status(201).json({
          success: true,
@@ -33,8 +38,54 @@ borrowRoute.post('/', async (req: Request, res: Response) => {
    } catch (error: any) {
       res.status(400).json({
          success: false,
-         message: "Validation failed",
-         error
+         message: error.message || "Validation failed",
+      })
+   }
+})
+
+// Get borrow using aggregate <API>
+borrowRoute.get('/', async (req: Request, res: Response) => {
+   try {
+      const borrow = await Borrow.aggregate([
+         {
+            $group: {
+               _id: '$book',
+               totalQuantity: { $sum: "$quantity" }
+            }
+         },
+         {
+            $lookup: {
+               from: 'books',
+               localField: '_id',
+               foreignField: '_id',
+               as: 'bookDetails'
+            }
+         },
+         {
+            $unwind: '$bookDetails'
+         },
+         {
+            $project: {
+               _id: 0,
+               book: {
+                  title: '$bookDetails.title',
+                  isbn: '$bookDetails.isbn'
+               },
+               totalQuantity: 1
+            }
+         }
+      ])
+
+      res.status(200).json({
+         success: true,
+         message: "Book borrowed successfully",
+         data: borrow
+      })
+
+   } catch (error: any) {
+      res.status(400).json({
+         success: false,
+         message: error.message || "Validation failed",
       })
    }
 })

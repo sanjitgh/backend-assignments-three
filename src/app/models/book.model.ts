@@ -41,6 +41,9 @@ const bookSchema = new Schema<BookInterface>({
    }
 )
 
-// method todo
+// Instance Method 
+bookSchema.methods.updateAvailability = function () {
+   this.available = this.copies > 0
+}
 
-export const Book = model("Book", bookSchema)
+export const Book = model<BookInterface>("Book", bookSchema)

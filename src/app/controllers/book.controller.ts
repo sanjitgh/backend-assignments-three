@@ -29,7 +29,7 @@ booksRoutes.get('/', async (req: Request, res: Response) => {
    try {
       const book = await Book.find()
 
-      res.status(201).json({
+      res.status(200).json({
          success: true,
          message: "Books retrieved successfully",
          data: book
@@ -50,7 +50,7 @@ booksRoutes.get('/:bookId', async (req: Request, res: Response) => {
       const bookId = req.params.bookId;
       const book = await Book.findById(bookId)
 
-      res.status(201).json({
+      res.status(200).json({
          success: true,
          message: "Books retrieved successfully",
          data: book

@@ -6,4 +6,5 @@ export interface BookInterface {
    description: string,
    copies: number,
    available: boolean,
+   updateAvailability(): void
 }
